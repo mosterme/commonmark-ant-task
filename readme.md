@@ -1,0 +1,22 @@
+# Commonmark Ant Task
+
+A simple Markdown Ant Task. Because sometimes Maven site is just overkill.
+
+### build.xml
+```xml
+<project name="Commonmark Ant Task Example" default="markdown">
+
+    <target name="markdown" description="Use the Commonmark Ant Task">
+        <taskdef name="markdown" classname="mosterme.commonmark.AntTask">
+            <classpath>
+                <pathelement location="target/commonmark-ant-task-0.1.jar"/>
+                <pathelement location="target/commonmark-0.27.1.jar"/>
+            </classpath>
+        </taskdef>
+        
+        <!-- convert a single markdown file to html -->
+        <markdown source="readme.md" destination="target"/>
+    </target>
+
+</project>
+```
