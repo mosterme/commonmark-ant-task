@@ -1,8 +1,10 @@
 package mosterme.commonmark;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 
+import org.apache.tools.ant.types.FileSet;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -30,11 +32,10 @@ public class AntTask extends Task
     protected void toHtml(File in, File out)  {
         try
         {
-            File html = new File(out, in.getName().replace(".md", ".html"));
             String markdown = Files.readString(in.toPath());
             Node node = parser.parse(markdown);
             String content = renderer.render(node);
-            Files.writeString(html.toPath(), content);
+            Files.writeString(out.toPath(), content);
         }
         catch (IOException e)
         {
@@ -55,7 +56,21 @@ public class AntTask extends Task
 
         if (source.isFile()) {
             log("Converting " + source + " to " + destination);
-            toHtml(source, destination);
+            File out = new File(destination, source.getName().replace(".md", ".html"));
+            toHtml(source, out);
+        }
+
+        if (source.isDirectory()) {
+            FileSet fileset = new FileSet(); fileset.setDir(source);
+            DirectoryScanner scanner = fileset.getDirectoryScanner(getProject());
+
+            log("Converting " + source + " to " + destination + " (" + scanner.getIncludedFilesCount() + " files)");
+
+            for (String element : scanner.getIncludedFiles()) {
+                File in = new File(source + File.separator + element);
+                File out = new File(destination, in.getName().replace(".md", ".html"));
+                toHtml(in, out);
+            }
         }
     }
 }
