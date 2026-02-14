@@ -18,10 +18,10 @@
         </taskdef>
 
         <!-- convert a single markdown file to html -->
-        <markdown source="readme.md" destination="target"/>
+        <markdown source="readme.md" destination="target" verbose="true"/>
 
         <!-- convert all files from a source directory -->
-        <markdown source="src/site/markdown" destination="target/html"/>
+        <markdown source="src/site/markdown" destination="target/html" verbose="true"/>
     </target>
 
 </project>

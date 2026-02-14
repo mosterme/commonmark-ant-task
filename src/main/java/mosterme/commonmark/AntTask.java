@@ -15,7 +15,16 @@ import java.nio.file.Files; // Java 11
 
 public class AntTask extends Task
 {
+    private boolean overwrite, verbose;
     private File source, destination;
+
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
 
     public void setSource(final File source) {
         this.source = source;
@@ -30,16 +39,20 @@ public class AntTask extends Task
     private final HtmlRenderer renderer = HtmlRenderer.builder().build();
 
     protected void toHtml(File in, File out)  {
-        try
+        if (overwrite || !out.exists() || in.lastModified() > out.lastModified())
         {
-            String markdown = Files.readString(in.toPath());
-            Node node = parser.parse(markdown);
-            String content = renderer.render(node);
-            Files.writeString(out.toPath(), content);
-        }
-        catch (IOException e)
-        {
-            throw new BuildException(e);
+            try
+            {
+                if (verbose) log("\t" + in + " -> " + out);
+                String markdown = Files.readString(in.toPath());
+                Node node = parser.parse(markdown);
+                String content = renderer.render(node);
+                Files.writeString(out.toPath(), content);
+            }
+            catch (IOException e)
+            {
+                throw new BuildException(e);
+            }
         }
     }
 
