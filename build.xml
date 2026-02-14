@@ -1,6 +1,15 @@
 <project name="Commonmark Ant Task Example" default="markdown">
 
-    <target name="markdown" description="Use the Commonmark Ant Task">
+    <target name="clean">
+        <delete file="target/readme.html" />
+        <delete dir="target/html" />
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="target/html" />
+    </target>
+
+    <target name="markdown" description="Use the Commonmark Ant Task" depends="prepare">
         <taskdef name="markdown" classname="mosterme.commonmark.AntTask">
             <classpath>
                 <pathelement location="target/commonmark-ant-task-0.1.jar"/>
@@ -11,6 +20,8 @@
         <!-- convert a single markdown file to html -->
         <markdown source="readme.md" destination="target"/>
 
+        <!-- convert all files from a source directory -->
+        <markdown source="src/site/markdown" destination="target/html"/>
     </target>
 
 </project>
